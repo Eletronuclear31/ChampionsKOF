@@ -1,0 +1,25 @@
+# Build
+build/
+
+# Qt Creator
+.qtcreator/
+
+# ROMs
+roms/
+
+# Compiled files
+*.lib
+*.obj
+*.exe
+*.dll
+*.pdb
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# IDE
+.vs/
+.vscode/

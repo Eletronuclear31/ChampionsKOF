@@ -1,0 +1,4 @@
+#ifndef COREADAPTER_H
+#define COREADAPTER_H
+
+#endif // COREADAPTER_H
