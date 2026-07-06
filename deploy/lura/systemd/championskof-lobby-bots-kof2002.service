@@ -1,0 +1,21 @@
+[Unit]
+Description=ChampionsKOF KOF2002 Lobby-only BOT Rotation Manager
+After=network-online.target championskof-api.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=championskof
+Group=championskof
+WorkingDirectory=/opt/championskof/current
+EnvironmentFile=/etc/championskof/lobby-bots-kof2002.env
+ExecStart=/bin/sh -lc 'exec /opt/championskof/current/online_server/.venv/bin/python /opt/championskof/current/bots/champions_lobby_bot_manager.py --base-url "$CHAMPIONS_LOBBY_BOT_BASE_URL" --driver "$CHAMPIONS_LOBBY_BOT_DRIVER" --names "$CHAMPIONS_LOBBY_BOT_NAMES" --active-count "$CHAMPIONS_LOBBY_BOT_ACTIVE_COUNT" --rotation-batch-size "$CHAMPIONS_LOBBY_BOT_ROTATION_BATCH_SIZE" --rotation-interval-seconds "$CHAMPIONS_LOBBY_BOT_ROTATION_INTERVAL_SECONDS" --rotation-gap-seconds "$CHAMPIONS_LOBBY_BOT_ROTATION_GAP_SECONDS" --stagger-seconds "$CHAMPIONS_LOBBY_BOT_STAGGER_SECONDS" --heartbeat-seconds "$CHAMPIONS_LOBBY_BOT_HEARTBEAT_SECONDS" --metrics-path "$CHAMPIONS_LOBBY_BOT_METRICS_PATH" --account-namespace "$CHAMPIONS_LOBBY_BOT_ACCOUNT_NAMESPACE" --slot-offset "$CHAMPIONS_LOBBY_BOT_SLOT_OFFSET" --build-label "$CHAMPIONS_LOBBY_BOT_BUILD_LABEL"'
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/opt/championskof/shared
+
+[Install]
+WantedBy=multi-user.target

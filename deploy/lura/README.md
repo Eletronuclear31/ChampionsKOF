@@ -15,6 +15,7 @@ This host is intended to run:
 - matchmaking API;
 - realtime UDP relay;
 - one external BOT client for KOF2002 labs;
+- one lobby-only BOT rotation manager for KOF2002 presence;
 - avatar storage with an initial 5 GB operational budget;
 - MySQL database.
 
@@ -105,7 +106,7 @@ systemctl start championskof-api.service
 systemctl start championskof-realtime-relay.service
 ```
 
-BOT service installation is intentionally separate. Install it only after the match client runtime is ready on Linux:
+BOT service installation is intentionally separate. Install the match BOT only after the match client runtime is ready on Linux:
 
 ```bash
 cp /opt/championskof/current/deploy/lura/systemd/championskof-bot-kof2002.service /etc/systemd/system/
@@ -114,6 +115,27 @@ systemctl enable championskof-bot-kof2002.service
 systemctl start championskof-bot-kof2002.service
 ```
 
+The lobby-only BOT manager does not launch the emulator, does not join rooms and does not connect to the relay. It only logs in through the public API and touches lobby presence:
+
+```bash
+cp /opt/championskof/current/deploy/lura/lobby-bots-kof2002.env.example /etc/championskof/lobby-bots-kof2002.env
+chmod 600 /etc/championskof/lobby-bots-kof2002.env
+cp /opt/championskof/current/deploy/lura/systemd/championskof-lobby-bots-kof2002.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable championskof-lobby-bots-kof2002.service
+systemctl start championskof-lobby-bots-kof2002.service
+```
+
+Default KOF2002 lobby policy:
+
+- 12 lobby-only BOT accounts;
+- 8 online at the same time;
+- 4 offline in standby;
+- every 6 hours, 4 active BOTs leave;
+- after 5 minutes, the 4 standby BOTs enter;
+- exits and entries are staggered by 15 seconds;
+- `Matador` remains a separate match/lab BOT and is not part of this lobby rotation.
+
 ## Health checks
 
 ```bash
@@ -121,8 +143,10 @@ curl -fsS http://127.0.0.1:8080/health
 curl -fsS http://127.0.0.1:8080/api/bootstrap
 systemctl status championskof-api --no-pager
 systemctl status championskof-realtime-relay --no-pager
+systemctl status championskof-lobby-bots-kof2002 --no-pager
 journalctl -u championskof-api -n 80 --no-pager
 journalctl -u championskof-realtime-relay -n 80 --no-pager
+journalctl -u championskof-lobby-bots-kof2002 -n 80 --no-pager
 ```
 
 ## Capacity target
@@ -130,6 +154,7 @@ journalctl -u championskof-realtime-relay -n 80 --no-pager
 Initial target:
 
 - 1 KOF2002 BOT v0/v1/v2 canary;
+- 8 KOF2002 lobby-only BOTs online from a 12-account rotation pool;
 - API and relay on the same VPS;
 - 5 GB avatar budget;
 - long relay/P2P labs with telemetry enabled.
