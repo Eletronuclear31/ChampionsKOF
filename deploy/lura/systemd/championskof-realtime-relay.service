@@ -1,0 +1,21 @@
+[Unit]
+Description=ChampionsKOF Realtime UDP Relay
+After=network-online.target mysql.service championskof-api.service
+Wants=network-online.target mysql.service
+
+[Service]
+Type=simple
+User=championskof
+Group=championskof
+WorkingDirectory=/opt/championskof/current/online_server
+EnvironmentFile=/etc/championskof/championskof.env
+ExecStart=/opt/championskof/current/online_server/.venv/bin/python /opt/championskof/current/online_server/realtime_relay.py --relay-host 0.0.0.0 --relay-port 7000 --data-dir /opt/championskof/shared/data --telemetry-log /opt/championskof/shared/data/realtime_relay_metrics.jsonl
+Restart=always
+RestartSec=1
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/opt/championskof/shared /opt/championskof/current/online_server
+
+[Install]
+WantedBy=multi-user.target

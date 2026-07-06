@@ -1,0 +1,21 @@
+[Unit]
+Description=ChampionsKOF KOF2002 Native Lightweight BOT
+After=network-online.target championskof-api.service championskof-realtime-relay.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=championskof
+Group=championskof
+WorkingDirectory=/opt/championskof/current
+EnvironmentFile=/etc/championskof/bot-kof2002.env
+ExecStart=/opt/championskof/current/online_server/.venv/bin/python /opt/championskof/current/bots/champions_native_bot.py --base-url ${CHAMPIONS_BOT_BASE_URL} --driver ${CHAMPIONS_BOT_DRIVER} --slot ${CHAMPIONS_BOT_SLOT} --nick ${CHAMPIONS_BOT_NICK} --room-prefix ${CHAMPIONS_BOT_ROOM_PREFIX} --profile ${CHAMPIONS_BOT_PROFILE} --level ${CHAMPIONS_BOT_LEVEL} --heartbeat-seconds ${CHAMPIONS_BOT_HEARTBEAT_SECONDS} --status-signal-seconds ${CHAMPIONS_BOT_STATUS_SIGNAL_SECONDS} --metrics-path ${CHAMPIONS_BOT_METRICS_PATH} --enable-relay --app-version ${CHAMPIONS_BOT_APP_VERSION} --app-build ${CHAMPIONS_BOT_APP_BUILD} --neutral-input ${CHAMPIONS_BOT_NEUTRAL_INPUT} --relay-frame-hz ${CHAMPIONS_BOT_RELAY_FRAME_HZ}
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/opt/championskof/shared /opt/championskof/current
+
+[Install]
+WantedBy=multi-user.target
